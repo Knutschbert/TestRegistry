@@ -19,7 +19,7 @@ jobs:
         id: extract-json
         run: |
           BODY="${{ github.event.issue.body }}"
-          JSON=$(echo "$BODY" | sed -n '/```json/,/```/p' | sed '1d;$d')
+          JSON=$(echo "$BODY_CONTENT" | awk '/^```/{flag=1; next} /^```/{flag=0} flag')
           if [ -z "$JSON" ]; then
             echo "No JSON found in issue body. Exiting."
             exit 1
