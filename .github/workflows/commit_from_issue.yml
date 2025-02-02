@@ -8,6 +8,8 @@ on:
 jobs:
   process-issue:
     runs-on: ubuntu-latest
+    outputs:
+      json_payload: ${{ steps.extract-json.outputs.payload }}
 
     steps:
       - name: Checkout repository
@@ -25,12 +27,9 @@ jobs:
       - name: Parse JSON and prepare file
         id: parse-json
         run: |
-          DECODED_JSON=$(echo "$json" | base64 -d)
-          echo "$DECODED_JSON" > issue_data.json
-      
-          PLAYFAB_ID=$(jq -r '.PlayfabID' issue_data.json)
-          GUID=$(jq -r '.GUID' issue_data.json)
-          NAME=$(jq -r '.Name' issue_data.json)
+          PLAYFAB_ID= ${{ fromJson(steps.extract-json.outputs.payload).PlayfabID }}
+          GUID=${{ fromJson(steps.extract-json.outputs.payload).GUID }}
+          NAME=${{ fromJson(steps.extract-json.outputs.payload).Name }}
       
           if [[ -z "$PLAYFAB_ID" || -z "$GUID" || -z "$NAME" ]]; then
             echo "Error: Missing required JSON fields."
