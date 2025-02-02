@@ -19,6 +19,8 @@ jobs:
         id: extract-json
         run:
           ./.github/workflows/scripts/extract-issue-from-json-body.sh "${{ github.event.issue.number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Parse JSON and prepare file
         id: parse-json
