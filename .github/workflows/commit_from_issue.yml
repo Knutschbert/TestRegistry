@@ -44,17 +44,24 @@ jobs:
           echo "guid=$GUID" >> $GITHUB_ENV
           echo "name=$NAME" >> $GITHUB_ENV
 
+      - name: Create JSON file
+        run: |
+          JSON_FILE="data/${{ env.playfab_id }}/${{ env.guid }}.json"
+          mkdir -p "$(dirname "$JSON_FILE")"
+          echo '${{ steps.extract-json.outputs.payload }}' > "$JSON_FILE"
+          echo "Created JSON file at $JSON_FILE"
+
       - name: Update README.md
         run: |
-          README_FILE="data/$PLAYFAB_ID/README.md"
-          mkdir -p "$(dirname "$README_FILE")"  # Ensure the directory exists
-          ENTRY="- **$NAME** ($GUID)"
+          README_FILE="data/${{ env.playfab_id }}/README.md"
+          mkdir -p "$(dirname "$README_FILE")"  # Ensure directory exists
+          ENTRY="- **${{ env.name }}** (${{ env.guid }})"
           
           if [ ! -f "$README_FILE" ]; then
             echo "# Database Records" > "$README_FILE"
           fi
           
-          if ! grep -q "$GUID" "$README_FILE"; then
+          if ! grep -q "${{ env.guid }}" "$README_FILE"; then
             echo "$ENTRY" >> "$README_FILE"
           fi
 
