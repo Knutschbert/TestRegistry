@@ -46,7 +46,8 @@ jobs:
 
       - name: Update README.md
         run: |
-          README_FILE="data/README.md"
+          README_FILE="data/$PLAYFAB_ID/README.md"
+          mkdir -p "$(dirname "$README_FILE")"  # Ensure the directory exists
           ENTRY="- **$NAME** ($GUID)"
           
           if [ ! -f "$README_FILE" ]; then
