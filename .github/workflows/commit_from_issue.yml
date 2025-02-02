@@ -27,9 +27,9 @@ jobs:
       - name: Parse JSON and prepare file
         id: parse-json
         run: |
-          PLAYFAB_ID= ${{ fromJson(steps.extract-json.outputs.payload).PlayfabID }}
-          GUID=${{ fromJson(steps.extract-json.outputs.payload).GUID }}
-          NAME=${{ fromJson(steps.extract-json.outputs.payload).Name }}
+          PLAYFAB_ID="${{ fromJson(steps.extract-json.outputs.payload).PlayfabID }}""
+          GUID="${{ fromJson(steps.extract-json.outputs.payload).GUID }}""
+          NAME="${{ fromJson(steps.extract-json.outputs.payload).Name }}""
       
           if [[ -z "$PLAYFAB_ID" || -z "$GUID" || -z "$NAME" ]]; then
             echo "Error: Missing required JSON fields."
