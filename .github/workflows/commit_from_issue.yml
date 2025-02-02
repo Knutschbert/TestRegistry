@@ -19,33 +19,35 @@ jobs:
         id: extract-json
         run: |
           BODY="${{ github.event.issue.body }}"
-          JSON=$(echo "$BODY_CONTENT" | awk '/^```json/{flag=1; next} /^```/{flag=0} flag')
+          JSON=$(echo "$BODY" | sed -n '/```json/,/```/p' | sed '1d;$d')
+          
           if [ -z "$JSON" ]; then
-            echo "No JSON found in issue body. Exiting."
+            echo "Error: No JSON detected in issue body."
             exit 1
           fi
-          echo "$EXTRACTED_JSON" | jq empty
-          echo "$JSON" > issue_data.json
-          echo "JSON extracted: $JSON"
-          echo "json=$JSON" >> $GITHUB_ENV
+          
+          ENCODED_JSON=$(echo "$JSON" | base64 -w 0)
+          echo "json=$ENCODED_JSON" >> $GITHUB_ENV
 
       - name: Parse JSON and prepare file
         id: parse-json
         run: |
+          DECODED_JSON=$(echo "$json" | base64 -d)
+          echo "$DECODED_JSON" > issue_data.json
+      
           PLAYFAB_ID=$(jq -r '.PlayfabID' issue_data.json)
           GUID=$(jq -r '.GUID' issue_data.json)
           NAME=$(jq -r '.Name' issue_data.json)
-          
+      
           if [[ -z "$PLAYFAB_ID" || -z "$GUID" || -z "$NAME" ]]; then
-            echo "Missing required JSON fields. Exiting."
+            echo "Error: Missing required JSON fields."
             exit 1
           fi
-          
-          mkdir -p data/$PLAYFAB_ID
-          FILE_PATH="data/$PLAYFAB_ID/$GUID.json"
-          mv issue_data.json "$FILE_PATH"
-          echo "File saved at $FILE_PATH"
-          echo "file_path=$FILE_PATH" >> $GITHUB_ENV
+      
+          echo "PlayfabID: $PLAYFAB_ID"
+          echo "GUID: $GUID"
+          echo "Name: $NAME"
+      
           echo "playfab_id=$PLAYFAB_ID" >> $GITHUB_ENV
           echo "guid=$GUID" >> $GITHUB_ENV
           echo "name=$NAME" >> $GITHUB_ENV
