@@ -1,0 +1,71 @@
+name: Issue to Database Commit
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  process-issue:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: database
+
+      - name: Extract JSON from issue body
+        id: extract-json
+        run: |
+          BODY="${{ github.event.issue.body }}"
+          JSON=$(echo "$BODY" | awk '/```json/,/```/' | sed -e '1d;$d')
+          if [ -z "$JSON" ]; then
+            echo "No JSON found in issue body. Exiting."
+            exit 1
+          fi
+          echo "$JSON" > issue_data.json
+          echo "JSON extracted: $JSON"
+          echo "json=$JSON" >> $GITHUB_ENV
+
+      - name: Parse JSON and prepare file
+        id: parse-json
+        run: |
+          PLAYFAB_ID=$(jq -r '.PlayfabID' issue_data.json)
+          GUID=$(jq -r '.GUID' issue_data.json)
+          NAME=$(jq -r '.Name' issue_data.json)
+          
+          if [[ -z "$PLAYFAB_ID" || -z "$GUID" || -z "$NAME" ]]; then
+            echo "Missing required JSON fields. Exiting."
+            exit 1
+          fi
+          
+          mkdir -p data/$PLAYFAB_ID
+          FILE_PATH="data/$PLAYFAB_ID/$GUID.json"
+          mv issue_data.json "$FILE_PATH"
+          echo "File saved at $FILE_PATH"
+          echo "file_path=$FILE_PATH" >> $GITHUB_ENV
+          echo "playfab_id=$PLAYFAB_ID" >> $GITHUB_ENV
+          echo "guid=$GUID" >> $GITHUB_ENV
+          echo "name=$NAME" >> $GITHUB_ENV
+
+      - name: Update README.md
+        run: |
+          README_FILE="data/README.md"
+          ENTRY="- **$NAME** ($GUID)"
+          
+          if [ ! -f "$README_FILE" ]; then
+            echo "# Database Records" > "$README_FILE"
+          fi
+          
+          if ! grep -q "$GUID" "$README_FILE"; then
+            echo "$ENTRY" >> "$README_FILE"
+          fi
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Add data for ${{ env.name }} (${{ env.guid }})"
+          git push origin database
