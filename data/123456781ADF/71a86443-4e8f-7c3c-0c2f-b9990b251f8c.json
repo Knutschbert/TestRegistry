@@ -1,0 +1,21 @@
+{
+  "GUID": "71a86443-4e8f-7c3c-0c2f-b9990b251f8c",
+  "Name": "Bilberry Leaflet",
+  "Faction": "EFaction::Agatha",
+  "Class": "EAudioClassType::Footman",
+  "PlayfabID": "123456781ADF",
+  "CustomizationMap": {
+    "/Script/TBL.CTBeard": "/Game/Customization/Assets_Hair/Beard_00.Beard_00",
+    "/Script/TBL.CTHair": "/Game/Customization/Assets_Hair/FemaleHair_02.FemaleHair_02",
+    "/Script/TBL.CTHead": "/Game/Customization/Assets_Head/African_Female_Head_08.African_Female_Head_08",
+    "/Script/TBL.CTHeraldry": "/Game/Customization/Assets_Heraldry/Heraldry_Agatha_27_Bend_02.Heraldry_Agatha_27_Bend_02",
+    "/Script/TBL.CTPersonality": "/Game/Customization/Assets_Personalities/Chiv2_FemBarMaid.Chiv2_FemBarMaid",
+    "/Script/TBL.CTSkinTone": "/Game/Customization/Assets_SkinTones/Skintone_11.Skintone_11",
+    "/Script/TBL.CTArmourSet": "/Game/Customization/Assets_Agatha/Footman/Agatha_Footman_Armour_Huscarl_02.Agatha_Footman_Armour_Huscarl_02",
+    "/Script/TBL.CTScar": "/Game/Customization/Assets_Imperfections/Imperfections_LeftEyeScar.Imperfections_LeftEyeScar",
+    "/Script/TBL.CTNickname": "/Game/Customization/Assets_Nicknames/Nickname__Campaign_Stronghold_Runesinger.Nickname__Campaign_Stronghold_Runesinger",
+    "/Script/TBL.CTEyeColors": "/Game/Customization/Assets_EyeColor/Eye_Color_02.Eye_Color_02",
+    "/Script/TBL.CTFacePaint": "/Game/Customization/Assets_FacePaints/Facepaint_Feral_Agatha.Facepaint_Feral_Agatha",
+    "/Script/TBL.CTHelmet": "/Game/Customization/Assets_Helmets/No_Helmet.No_Helmet"
+  }
+}
